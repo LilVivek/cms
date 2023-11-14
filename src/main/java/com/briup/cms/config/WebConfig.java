@@ -28,11 +28,10 @@ public class WebConfig implements WebMvcConfigurer {
                 "/doc.html",
                 "/error"
         };
-        registry.addInterceptor(jwtInterceptor)
-                .addPathPatterns("/**")//全部拦截（相当于黑名单）
-                .excludePathPatterns(excludePatterns)//白名单(放行swagger)
-                .excludePathPatterns("/login");//白名单(放行登录界面)
-        //.excludePathPatterns("/animal/findByAnimalId/**");
+//        registry.addInterceptor(jwtInterceptor)
+//                .addPathPatterns("/**")//全部拦截（相当于黑名单）
+//                .excludePathPatterns(excludePatterns)//白名单(放行swagger)
+//                .excludePathPatterns("/login");//白名单(放行登录界面)
     }
 
     /*跨域映射*/
