@@ -26,7 +26,7 @@ import lombok.experimental.Accessors;
 public class Role implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    //赖国珅
     @ApiModelProperty("角色id")
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
