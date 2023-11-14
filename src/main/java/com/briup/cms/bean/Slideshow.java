@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -45,7 +47,7 @@ public class Slideshow implements Serializable {
     @ApiModelProperty("删除状态")
     @TableLogic
     private Integer deleted;
-
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty("上传时间")
     private LocalDateTime uploadTime;
 }
