@@ -13,6 +13,8 @@ public enum ResultCode {
 	PARAM_IS_BLANK(10002, "参数为空"),
 	PARAM_TYPE_BIND_ERROR(10003, "参数类型错误"),
 	PARAM_NOT_COMPLETE(10004, "参数缺失"),
+	TOKEN_TIMEOUT(1005, "登录超过五天，请重新登录"),
+	TOKEN_VALIDATE_ERROR(1006, "token验证未通过"),
 
 	/* 用户错误：20001-29999*/
 	USER_NOT_LOGIN(20001, "用户未登录"),
