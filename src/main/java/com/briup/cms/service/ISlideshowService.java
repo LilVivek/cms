@@ -22,7 +22,7 @@ public interface ISlideshowService extends IService<Slideshow> {
 
     Slideshow queryById(Integer id);
 
-    boolean saveOrUpdate(Slideshow slideshow);
+    void insertOrUpdate(Slideshow slideshow);
 
     void deleteByBatch(List<Integer> ids);
 }

@@ -1,5 +1,6 @@
 package com.briup.cms.web.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.briup.cms.bean.Category;
 import com.briup.cms.service.IArticleService;
 import com.briup.cms.service.ICategoryService;
@@ -55,10 +56,18 @@ public class CategoryController {
         iCategoryService.deleteById(id);
         return Result.success("删除成功");
     }
+
     @ApiOperation("批量删除栏目")
     @DeleteMapping("/deleteByIdAll/{ids}")
     public Result deleteByIdAll(@PathVariable("ids") List<Integer> ids) {
         iCategoryService.deleteByIdAll(ids);
         return Result.success("删除成功");
+    }
+
+    @ApiOperation(value = "分页查询所有栏目")
+    @GetMapping("/query")
+    public Result query(Integer pageNum, Integer pageSize,Integer parentId) {
+        IPage<Category> p = iCategoryService.query(pageNum,pageSize, parentId);
+        return Result.success(p);
     }
 }

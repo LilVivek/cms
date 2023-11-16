@@ -53,7 +53,7 @@ public class SlideshowController {
     @ApiOperation("新增或修改")
     @PostMapping("/saveOrUpdate")
     public Result saveOrUpdate(@RequestBody Slideshow slideshow) {
-        iSlideshowService.saveOrUpdate(slideshow);
+        iSlideshowService.insertOrUpdate(slideshow);
         return Result.success("操作成功");
     }
 

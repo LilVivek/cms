@@ -1,6 +1,8 @@
 package com.briup.cms.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.briup.cms.bean.Article;
 import com.briup.cms.bean.Category;
 import com.briup.cms.bean.User;
@@ -182,5 +184,23 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         if (count==0){
             throw new ServiceException(ResultCode.PARAM_IS_INVALID);
         }
+    }
+
+    @Override
+    public IPage<Category> query(Integer pageNum, Integer pageSize, Integer parentId) {
+        if (pageNum == null || pageNum <= 0 || pageSize == null|| pageSize <= 0){
+            throw new ServiceException(ResultCode.PARAM_IS_INVALID);
+        }
+        Page<Category> page = new Page<>(pageNum, pageSize);
+        LambdaQueryWrapper<Category> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(parentId!=null,Category::getParentId,parentId);//如果有parentId,查找所有以它为父栏目的栏目
+        wrapper.orderByAsc(Category::getParentId)
+                .orderByAsc(Category::getOrderNum);
+        Page<Category> list = categoryMapper.selectPage(page, wrapper);//这里一旦调用selectPage方法后返回值就会赋值给page
+//        System.out.println(list+":"+page);//list和page指向同一地址,list和page完全相同
+        if (list.getTotal()==0){
+            throw new ServiceException(ResultCode.CATEGORY_NOT_EXIST);
+        }
+        return list;
     }
 }

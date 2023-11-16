@@ -1,5 +1,6 @@
 package com.briup.cms.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.briup.cms.bean.Category;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -24,4 +25,6 @@ public interface ICategoryService extends IService<Category> {
     void deleteById(Integer id);
 
     void deleteByIdAll(List<Integer> ids);
+
+    IPage<Category> query(Integer pageNum, Integer pageSize, Integer parentId);
 }

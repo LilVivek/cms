@@ -66,7 +66,7 @@ public class SlideshowServiceImpl extends ServiceImpl<SlideshowMapper, Slideshow
     }
 
     @Override
-    public boolean saveOrUpdate(Slideshow slideshow) {
+    public void insertOrUpdate(Slideshow slideshow) {
         boolean flag = false;//标识url是否是原来的值
         if (null != slideshow.getUrl()) {
             if (null != slideshow.getId()) {//当更新操作时
@@ -97,7 +97,6 @@ public class SlideshowServiceImpl extends ServiceImpl<SlideshowMapper, Slideshow
             }
             slideshowMapper.updateById(slideshow);
         }
-        return true;
     }
 
     @Override
