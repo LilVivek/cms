@@ -38,13 +38,12 @@ mybatis-plus:
       logic-delete-value: 1 # 逻辑已删除值(默认为 1)
       logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
 # 文件上传相关配置
-upload:
-  oss:
-    # 配置AK
-    accessKey: "hCh3WLrx9B_vOBOWXXcWQvgy7-ezs3SUjNxZiVHA"
-    # 配置SK
-    secretKey: "lPFkbA9WAs4dfgpKvBqCnZQOHooYe-DVJ07VPvBS"
-    # 配置桶（存储空间名称）
-    bucket: "briup"
-    # 配置基础域名（测试域名或个人完成备案和解析的域名）
-    baseUrl: "http://s3jigr5rk.bkt.clouddn.com/"
+oss:
+  # 配置AK
+  accessKey: "hCh3WLrx9B_vOBOWXXcWQvgy7-ezs3SUjNxZiVHA"
+  # 配置SK
+  secretKey: "lPFkbA9WAs4dfgpKvBqCnZQOHooYe-DVJ07VPvBS"
+  # 配置桶（存储空间名称）
+  bucket: "briup"
+  # 配置基础域名（测试域名或个人完成备案和解析的域名）
+  baseUrl: "http://s3jigr5rk.bkt.clouddn.com/"
