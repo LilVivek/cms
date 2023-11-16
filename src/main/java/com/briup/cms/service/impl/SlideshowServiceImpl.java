@@ -108,7 +108,7 @@ public class SlideshowServiceImpl extends ServiceImpl<SlideshowMapper, Slideshow
         LambdaQueryWrapper<Slideshow> wrapper = new LambdaQueryWrapper<>();
         wrapper.in(Slideshow::getId,ids);
         List<Slideshow> list = slideshowMapper.selectList(wrapper);
-        if (list==null){//如果一個id都沒查到對應的數據
+        if (list==null||list.size()==0){//如果一個id都沒查到對應的數據
             throw new ServiceException(ResultCode.SLIDESHOW_NOT_EXISTED);
         }
         slideshowMapper.deleteBatchIds(ids);

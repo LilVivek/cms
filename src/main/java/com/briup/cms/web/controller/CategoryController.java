@@ -1,18 +1,64 @@
 package com.briup.cms.web.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.briup.cms.bean.Category;
+import com.briup.cms.service.IArticleService;
+import com.briup.cms.service.ICategoryService;
+import com.briup.cms.util.Result;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author Vivek
  * @since 2023-11-14
  */
+@Api(tags = "栏目模块")
+@Slf4j
 @RestController
-@RequestMapping("/category")
+@RequestMapping("/auth/category")
 public class CategoryController {
+    @Autowired
+    ICategoryService iCategoryService;
 
+    @ApiOperation("新增栏目")
+    @PostMapping("/save")
+    public Result save(@RequestBody Category category) {
+        iCategoryService.insert(category);
+        return Result.success("新增成功");
+    }
+
+    @ApiOperation("根据id查询栏目信息")
+    @GetMapping("/getCategoryById/{id}")
+    public Result getCategoryById(@PathVariable("id") Integer id) {
+        Category category = iCategoryService.getCategoryById(id);
+        return Result.success(category);
+    }
+
+    @ApiOperation("更新栏目")
+    @PutMapping("/update")
+    public Result update(@RequestBody Category category) {
+        iCategoryService.update(category);
+        return Result.success("修改成功");
+    }
+
+    @ApiOperation("根据id删除栏目")
+    @DeleteMapping("/deleteById/{id}")
+    public Result deleteById(@PathVariable Integer id) {
+        iCategoryService.deleteById(id);
+        return Result.success("删除成功");
+    }
+    @ApiOperation("批量删除栏目")
+    @DeleteMapping("/deleteByIdAll/{ids}")
+    public Result deleteByIdAll(@PathVariable("ids") List<Integer> ids) {
+        iCategoryService.deleteByIdAll(ids);
+        return Result.success("删除成功");
+    }
 }

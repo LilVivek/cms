@@ -3,6 +3,8 @@ package com.briup.cms.service;
 import com.briup.cms.bean.Category;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务类
@@ -13,4 +15,13 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface ICategoryService extends IService<Category> {
 
+    void insert(Category category);
+
+    Category getCategoryById(Integer id);
+
+    void update(Category category);
+
+    void deleteById(Integer id);
+
+    void deleteByIdAll(List<Integer> ids);
 }
