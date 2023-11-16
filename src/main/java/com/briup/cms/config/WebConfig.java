@@ -1,6 +1,6 @@
 package com.briup.cms.config;
 
-import com.briup.cms.Interceptor.JwtInterceptor;
+import com.briup.cms.web.Interceptor.JwtInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -15,23 +15,10 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        // 对swagger的请求不进行拦截
-        String[] excludePatterns = new String[]{
-                "/profile/**",
-                "/common/download**",
-                "/common/download/resource**",
-                "/swagger-ui.html",
-                "/swagger-resources/**",
-                "/webjars/**",
-                "/*/api-docs",
-                "/favicon.ico",
-                "/doc.html",
-                "/error"
-        };
-//        registry.addInterceptor(jwtInterceptor)
-//                .addPathPatterns("/**")//全部拦截（相当于黑名单）
-//                .excludePathPatterns(excludePatterns)//白名单(放行swagger)
-//                .excludePathPatterns("/login");//白名单(放行登录界面)
+        registry.addInterceptor(jwtInterceptor)
+                .addPathPatterns("/auth/**")//拦截路径（只拦截这些路径)(类似黑名单)
+                .excludePathPatterns("/auth/category/queryAllParent")//黑名单中的白名单(类似差集)//查询所有一级栏目及其二级栏目的接口(供前台使用)
+                .excludePathPatterns("/auth/comment/queryByArticleId/{id}");//黑名单中的白名单(类似差集)//查询指定文章的评论
     }
 
     /*跨域映射*/

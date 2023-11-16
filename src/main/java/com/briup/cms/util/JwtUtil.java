@@ -39,7 +39,7 @@ public class JwtUtil {
             Date date = new Date(calendar.getTimeInMillis());//设置过期时间(五天过期)
             Algorithm algorithm = Algorithm.HMAC256(SECRET);//把密钥加密
             return JWT.create()//token的header放加密类型JWT和加密算法Algorithm
-                    // 将 userId 保存到payLoad的Audience里面,设置受众，确保它只能被特定的接收者使用
+                    // 将 userId 保存到payLoad的Audience里面,设置受众，确保它只能被特定的接收者使用(一般在JWT拦截器里用到)
                     .withAudience(String.valueOf(userId))
                     // 存放自定义数据(声明claim)
                     .withClaim("info", info)//(这三个with方法都放在了载荷payload里)
@@ -64,6 +64,36 @@ public class JwtUtil {
         JWTVerifier verifier = JWT.require(algorithm).build();//根据加密过的密钥解析token
         verifier.verify(token);
         return true;
+    }
+
+
+    /**
+     * 根据token获取受众里的userId
+     *
+     * @param token
+     * @return
+     */
+    public static String getUserId(String token) {//获取token里的payload里的受众audience
+        try {
+            String userId = JWT.decode(token).getAudience().get(0);
+            return userId;
+        } catch (JWTDecodeException e) {
+            return null;
+        }
+    }
+
+    /**
+     * 根据token获取自定义数据info
+     *
+     * @param token
+     * @return
+     */
+    public static Map<String, Object> getInfo(String token) {//获取token中载荷payload里的声明claim
+        try {
+            return JWT.decode(token).getClaim("info").asMap();
+        } catch (JWTDecodeException e) {
+            return null;
+        }
     }
 
 }
