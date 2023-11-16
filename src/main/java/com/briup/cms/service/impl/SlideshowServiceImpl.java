@@ -31,10 +31,10 @@ public class SlideshowServiceImpl extends ServiceImpl<SlideshowMapper, Slideshow
     @Override
     public List<Slideshow> queryAllEnable() {
         LambdaQueryWrapper<Slideshow> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Slideshow::getStatus, "启用");
-        wrapper.orderByDesc(Slideshow::getUploadTime);
-        List<Slideshow> list = slideshowMapper.selectList(wrapper);
-        if (list == null || list.size() == 0)//没有数据
+        wrapper.eq(Slideshow::getStatus, "启用")
+                .orderByDesc(Slideshow::getUploadTime);
+        List<Slideshow> list = slideshowMapper.selectList(wrapper);//list最多是空集合，不可能返回null
+        if (list.size() == 0)//没有数据
             throw new ServiceException(ResultCode.DATA_NONE);
         return list;
 
@@ -105,9 +105,9 @@ public class SlideshowServiceImpl extends ServiceImpl<SlideshowMapper, Slideshow
             throw new ServiceException(ResultCode.PARAM_IS_BLANK);
         }
         LambdaQueryWrapper<Slideshow> wrapper = new LambdaQueryWrapper<>();
-        wrapper.in(Slideshow::getId,ids);
+        wrapper.in(Slideshow::getId, ids);
         List<Slideshow> list = slideshowMapper.selectList(wrapper);
-        if (list==null||list.size()==0){//如果一個id都沒查到對應的數據
+        if (list == null || list.size() == 0) {//如果一個id都沒查到對應的數據
             throw new ServiceException(ResultCode.SLIDESHOW_NOT_EXISTED);
         }
         slideshowMapper.deleteBatchIds(ids);
