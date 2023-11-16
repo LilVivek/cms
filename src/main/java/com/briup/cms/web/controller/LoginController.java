@@ -30,4 +30,10 @@ public class LoginController {
 
         return Result.success(token);
     }
+
+    @ApiOperation(value = "退出登录")
+    @PostMapping(value = "/logout")
+    public Result logout() {//后端什么都不用做，前端收到响应后会删掉token
+        return Result.success();
+    }
 }

@@ -14,4 +14,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface IUserService extends IService<User> {
 
     String login(String username, String password);
+
+    User queryById(Long id);
 }

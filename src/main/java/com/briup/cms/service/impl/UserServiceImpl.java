@@ -49,4 +49,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }
         return token;
     }
+
+    @Override
+    public User queryById(Long id) {
+        if (id == null){
+            throw new ServiceException(ResultCode.PARAM_IS_BLANK);
+        }
+        User user = userMapper.selectById(id);
+        if (user == null){
+            throw new ServiceException(ResultCode.DATA_NONE);
+        }
+        return user;
+    }
 }
