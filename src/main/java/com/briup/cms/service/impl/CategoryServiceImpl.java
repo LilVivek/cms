@@ -125,18 +125,18 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
             if (categoryMapper.selectCount(wrapper) != 0) {
                 throw new ServiceException(ResultCode.PARAM_IS_INVALID);
             }
-        }else {//如果是二级栏目
+        } else {//如果是二级栏目
             LambdaQueryWrapper<Article> wrapper = new LambdaQueryWrapper<>();
-            wrapper.eq(Article::getCategoryId,id);
+            wrapper.eq(Article::getCategoryId, id);
             //该栏目下有文章
-            if(articleMapper.selectCount(wrapper)!=0){
+            if (articleMapper.selectCount(wrapper) != 0) {
                 List<Article> articles = articleMapper.selectList(wrapper);//二级栏目下的所有文章
                 List<Long> userIds = new ArrayList<>();//文章的所有作者id
                 for (Article article : articles) {
                     userIds.add(article.getUserId());
                 }
                 List<User> users = userMapper.selectBatchIds(userIds);
-                if (users.size()!=0){//所有文章的作者没有全部注销
+                if (users.size() != 0) {//所有文章的作者没有全部注销
                     throw new ServiceException(ResultCode.PARAM_IS_INVALID);
                 }
             }
@@ -146,10 +146,41 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
 
     @Override
     public void deleteByIdAll(List<Integer> ids) {
-//        int count=0;
-//        categoryMapper.deleteBatchIds(null);
-//        if (count==0){
-//            throw new ServiceException(ResultCode.PARAM_IS_INVALID);
-//        }
+        int count = 0;
+        for (Integer id : ids) {
+            Category category = categoryMapper.selectById(id);//要删除的栏目
+            if (category == null) {
+                continue;
+            }
+
+            //不能删除的情况抛异常
+            if (category.getParentId() == null) {//如果是一级栏目
+                LambdaQueryWrapper<Category> wrapper = new LambdaQueryWrapper<>();
+                wrapper.eq(Category::getParentId, id);
+                //如果DB里有数据以传入的id为parentId,说明下面包含二级栏目
+                if (categoryMapper.selectCount(wrapper) != 0) {
+                    continue;
+                }
+            } else {//如果是二级栏目
+                LambdaQueryWrapper<Article> wrapper = new LambdaQueryWrapper<>();
+                wrapper.eq(Article::getCategoryId, id);
+                //该栏目下有文章
+                if (articleMapper.selectCount(wrapper) != 0) {
+                    List<Article> articles = articleMapper.selectList(wrapper);//二级栏目下的所有文章
+                    List<Long> userIds = new ArrayList<>();//文章的所有作者id
+                    for (Article article : articles) {
+                        userIds.add(article.getUserId());
+                    }
+                    List<User> users = userMapper.selectBatchIds(userIds);
+                    if (users.size() != 0) {//所有文章的作者没有全部注销
+                        continue;
+                    }
+                }
+            }
+            count += categoryMapper.deleteById(id);
+        }
+        if (count==0){
+            throw new ServiceException(ResultCode.PARAM_IS_INVALID);
+        }
     }
 }
