@@ -15,7 +15,7 @@ public class JwtUtil {
      * 过期时间，单位：分钟
      * 但token字符串超时后，无法通过验证
      */
-    private static final int EXPIRE_TIME_MINUTE = 60 * 24 * 5;
+    private static final int EXPIRE_TIME_MINUTE = 60 * 24 * 5;//五天过期
     /**
      * jwt 密钥
      * 实现对数据的加密操作。通过该字符串对token字符串是否有效验证
@@ -31,52 +31,24 @@ public class JwtUtil {
      *               注意，map的value如果是null的话，也会报错
      * @return jwtToken
      */
-    public static String sign(String userId, Map<String, Object> info) {
+    //第一个参数用来设置Audience受众,第二个参数用来存放信息(放在声明claim里),这两个参数都放在载荷payload里
+    public static String sign(Long userId, Map<String, Object> info) {
         try {
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.MINUTE, EXPIRE_TIME_MINUTE);
-            Date date = new Date(calendar.getTimeInMillis());
-            Algorithm algorithm = Algorithm.HMAC256(SECRET);
-            return JWT.create()
-                    // 将 user id 保存到 token 里面
-                    .withAudience(userId)
-                    // 存放自定义数据
-                    .withClaim("info", info)
-                    // token过期
+            Date date = new Date(calendar.getTimeInMillis());//设置过期时间(五天过期)
+            Algorithm algorithm = Algorithm.HMAC256(SECRET);//把密钥加密
+            return JWT.create()//token的header放加密类型JWT和加密算法Algorithm
+                    // 将 userId 保存到payLoad的Audience里面,设置受众，确保它只能被特定的接收者使用
+                    .withAudience(String.valueOf(userId))
+                    // 存放自定义数据(声明claim)
+                    .withClaim("info", info)//(这三个with方法都放在了载荷payload里)
+                    // token过期时间(也在载荷payLoad里)
                     .withExpiresAt(date)
                     // token 的密钥
-                    .sign(algorithm);
+                    .sign(algorithm);//签名 = HMACSHA256(base64UrlEncode(header)+"."+base64UrlEncode(payload), secret);
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
-     * 根据token获取userId
-     *
-     * @param token
-     * @return
-     */
-    public static String getUserId(String token) {
-        try {
-            String userId = JWT.decode(token).getAudience().get(0);
-            return userId;
-        } catch (JWTDecodeException e) {
-            return null;
-        }
-    }
-
-    /**
-     * 根据token获取自定义数据info
-     *
-     * @param token
-     * @return
-     */
-    public static Map<String, Object> getInfo(String token) {
-        try {
-            return JWT.decode(token).getClaim("info").asMap();
-        } catch (JWTDecodeException e) {
             return null;
         }
     }
@@ -88,8 +60,8 @@ public class JwtUtil {
      * @return
      */
     public static boolean checkSign(String token) throws JWTVerificationException {
-        Algorithm algorithm = Algorithm.HMAC256(SECRET);
-        JWTVerifier verifier = JWT.require(algorithm).build();
+        Algorithm algorithm = Algorithm.HMAC256(SECRET);//加密密钥256bit
+        JWTVerifier verifier = JWT.require(algorithm).build();//根据加密过的密钥解析token
         verifier.verify(token);
         return true;
     }

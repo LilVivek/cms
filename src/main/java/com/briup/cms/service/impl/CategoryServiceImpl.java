@@ -105,7 +105,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         if (oldCategory.getParentId() != null
                 && category.getParentId() != null && !category.getParentId().equals(oldCategory.getParentId())) {
             Category parentCategory = categoryMapper.selectById(category.getParentId());
-            //新传入的parent_id必须有校且没有父栏目，否则报错
+            //新传入的parent_id必须有对应的数据且是一级栏目，否则报错
             if (parentCategory == null || parentCategory.getParentId() != null) {
                 throw new ServiceException(ResultCode.PCATEGORY_IS_INVALID);
             }
