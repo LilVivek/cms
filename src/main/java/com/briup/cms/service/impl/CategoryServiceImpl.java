@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.briup.cms.bean.Article;
 import com.briup.cms.bean.Category;
+import com.briup.cms.bean.Extend.CategoryExtend;
 import com.briup.cms.bean.User;
 import com.briup.cms.exception.ServiceException;
 import com.briup.cms.mapper.ArticleMapper;
@@ -199,6 +200,27 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         Page<Category> list = categoryMapper.selectPage(page, wrapper);//这里一旦调用selectPage方法后返回值就会赋值给page
 //        System.out.println(list+":"+page);//list和page指向同一地址,list和page完全相同
         if (list.getTotal()==0){
+            throw new ServiceException(ResultCode.CATEGORY_NOT_EXIST);
+        }
+        return list;
+    }
+
+    @Override
+    public List<CategoryExtend> queryAllParent() {
+        List<CategoryExtend> list = categoryMapper.queryAllParent();
+        if (list.size()==0){
+            throw new ServiceException(ResultCode.CATEGORY_NOT_EXIST);
+        }
+        return list;
+    }
+
+    @Override
+    public List<Category> queryAllOneLevel() {
+        LambdaQueryWrapper<Category> wrapper = new LambdaQueryWrapper<>();
+//        wrapper.eq(Category::getParentId,null);//这样写没用,相当于要求确切值为null，而不是查没有值的数据;相当于where parent_id=null
+        wrapper.isNull(Category::getParentId);//这样写才是查没有值的数据;相当于where parent_id is null
+        List<Category> list = categoryMapper.selectList(wrapper);//不会返回null，最多返回空集合
+        if (list.size()==0){
             throw new ServiceException(ResultCode.CATEGORY_NOT_EXIST);
         }
         return list;

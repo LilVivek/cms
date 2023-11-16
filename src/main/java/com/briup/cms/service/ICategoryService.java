@@ -3,6 +3,7 @@ package com.briup.cms.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.briup.cms.bean.Category;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.briup.cms.bean.Extend.CategoryExtend;
 
 import java.util.List;
 
@@ -27,4 +28,8 @@ public interface ICategoryService extends IService<Category> {
     void deleteByIdAll(List<Integer> ids);
 
     IPage<Category> query(Integer pageNum, Integer pageSize, Integer parentId);
+
+    List<CategoryExtend> queryAllParent();
+
+    List<Category> queryAllOneLevel();
 }

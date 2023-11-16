@@ -2,7 +2,10 @@ package com.briup.cms.mapper;
 
 import com.briup.cms.bean.Category;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.briup.cms.bean.Extend.CategoryExtend;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 /**
  * <p>
@@ -15,4 +18,5 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface CategoryMapper extends BaseMapper<Category> {
 
+    List<CategoryExtend> queryAllParent();
 }

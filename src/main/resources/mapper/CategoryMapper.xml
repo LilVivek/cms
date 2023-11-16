@@ -4,17 +4,51 @@
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.briup.cms.bean.Category">
-        <id column="id" property="id" />
-        <result column="name" property="name" />
-        <result column="description" property="description" />
-        <result column="order_num" property="orderNum" />
-        <result column="deleted" property="deleted" />
-        <result column="parent_id" property="parentId" />
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="description" property="description"/>
+        <result column="order_num" property="orderNum"/>
+        <result column="deleted" property="deleted"/>
+        <result column="parent_id" property="parentId"/>
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id, name, description, order_num, deleted, parent_id
     </sql>
+
+
+    <!--    查询所有1级栏目(含2级)-->
+    <resultMap id="BaseResultMap2" type="com.briup.cms.bean.Category">
+        <id column="c_id" property="id"/>
+        <result column="c_name" property="name"/>
+        <result column="c_description" property="description"/>
+        <result column="c_order_num" property="orderNum"/>
+        <result column="c_deleted" property="deleted"/>
+        <result column="c_parent_id" property="parentId"/>
+    </resultMap>
+    <resultMap id="queryAllParentResultMap" type="com.briup.cms.bean.Extend.CategoryExtend"
+               extends="BaseResultMap">
+        <!--能用嵌套查询的写法一定能用嵌套结果或其他写法 ，这里用外连接写-->
+        <collection property="cates" resultMap="BaseResultMap2"/>
+    </resultMap>
+    <select id="queryAllParent" resultMap="queryAllParentResultMap">
+        select c1.id,
+               c1.`name`,
+               c1.description,
+               c1.order_num,
+               c1.parent_id,
+               c2.id          c_id,
+               c2.`name`      c_name,
+               c2.description c_description,
+               c2.order_num   c_order_num,
+               c2.parent_id   c_parent_id
+        from cms_category c1
+                 LEFT JOIN cms_category c2
+                           ON c1.id = c2.parent_id
+        where c1.deleted = 0
+          and c2.deleted = 0
+        order by c1.order_num, c2.order_num
+    </select>
 
 </mapper>

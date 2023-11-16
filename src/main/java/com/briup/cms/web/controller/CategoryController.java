@@ -2,6 +2,7 @@ package com.briup.cms.web.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.briup.cms.bean.Category;
+import com.briup.cms.bean.Extend.CategoryExtend;
 import com.briup.cms.service.IArticleService;
 import com.briup.cms.service.ICategoryService;
 import com.briup.cms.util.Result;
@@ -66,8 +67,24 @@ public class CategoryController {
 
     @ApiOperation(value = "分页查询所有栏目")
     @GetMapping("/query")
-    public Result query(Integer pageNum, Integer pageSize,Integer parentId) {
-        IPage<Category> p = iCategoryService.query(pageNum,pageSize, parentId);
+    public Result query(Integer pageNum, Integer pageSize, Integer parentId) {
+        IPage<Category> p = iCategoryService.query(pageNum, pageSize, parentId);
         return Result.success(p);
     }
+
+    @ApiOperation(value = " 查询所有1级栏目(含2级)")
+    @GetMapping("/queryAllParent")
+    public Result queryAllParent() {
+        List<CategoryExtend> list = iCategoryService.queryAllParent();
+        return Result.success(list);
+    }
+
+    @ApiOperation(value = " 获取所有父栏目")
+    @GetMapping("/queryAllOneLevel")
+    public Result queryAllOneLevel() {
+        List<Category> list = iCategoryService.queryAllOneLevel();
+        return Result.success(list);
+    }
+
+
 }
