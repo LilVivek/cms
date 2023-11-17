@@ -31,6 +31,12 @@ public class UserController {
         User user = iUserService.queryById(id);
         return Result.success(user);
     }
+    @ApiOperation("新增用户")
+    @PostMapping("/save")
+    public Result save(@RequestBody User user) {
+        iUserService.insert(user);
+        return Result.success("新增成功");
+    }
 
 
 }

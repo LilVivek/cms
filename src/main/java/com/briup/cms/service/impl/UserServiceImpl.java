@@ -7,10 +7,13 @@ import com.briup.cms.mapper.UserMapper;
 import com.briup.cms.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.briup.cms.util.JwtUtil;
+import com.briup.cms.util.MD5Utils;
 import com.briup.cms.util.ResultCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,8 +44,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             if (user.getPassword().equals(password)) {//前端传来的密码和数据库的密码做比对
                 Map<String, Object> userMap = new HashMap<>();//这个userMap放在payLoad的Claim里
                 userMap.put("userId", user.getId());
-                userMap.put("username",user.getUsername());
-                userMap.put("roleId",user.getRoleId());
+                userMap.put("username", user.getUsername());
+                userMap.put("roleId", user.getRoleId());
                 // 返回token字符串
                 token = JwtUtil.sign(user.getId(), userMap);//第一个参数放在载荷payload的受众withAudience里，第二个放在载荷的声明withClaim里
             }
@@ -52,13 +55,32 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public User queryById(Long id) {
-        if (id == null){
+        if (id == null) {
             throw new ServiceException(ResultCode.PARAM_IS_BLANK);
         }
         User user = userMapper.selectById(id);
-        if (user == null){
+        if (user == null) {
             throw new ServiceException(ResultCode.DATA_NONE);
         }
         return user;
+    }
+
+    @Override
+    public void insert(User user) {
+        if (user == null) {
+            throw new ServiceException(ResultCode.DATA_NONE);
+        }
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(User::getUsername, user.getUsername());
+        User user1 = userMapper.selectOne(wrapper);
+        if (user1 != null) {//如果不为空说明用户名不唯一
+            throw new ServiceException(ResultCode.USERNAME_HAS_EXISTED);
+        }
+        if (!StringUtils.hasText(user.getUsername()) || !StringUtils.hasText(user.getPassword())) {
+            throw new ServiceException(ResultCode.PARAM_IS_BLANK);
+        }
+        user.setPassword(MD5Utils.MD5(user.getPassword()));//密码用MD5加密
+        user.setRegisterTime(LocalDateTime.now());
+        userMapper.insert(user);
     }
 }
