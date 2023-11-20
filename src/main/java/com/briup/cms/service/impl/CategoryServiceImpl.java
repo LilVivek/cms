@@ -1,6 +1,7 @@
 package com.briup.cms.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.briup.cms.bean.Article;
@@ -54,6 +55,12 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         int order_num = 1;//在没有数据时默认为1
         //在不加where判断条件下返回条数若不为0则代表数据库中有数据,order_num+1
         if (categoryMapper.selectCount(null) != 0) {
+//            老师的写法
+//            QueryWrapper<Category> wrapper2 = new QueryWrapper<>();
+//            wrapper2.select("max(order_num) as num");
+//            order_num = (int) categoryMapper.selectMaps(wrapper2).get(0).get("num")+1;
+
+            //自己的写法
             LambdaQueryWrapper<Category> wrapper1 = new LambdaQueryWrapper<>();
             wrapper1.orderByDesc(Category::getOrderNum);
             List<Category> list = categoryMapper.selectList(wrapper1);//根据oderNum倒序查找
@@ -182,24 +189,24 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
             }
             count += categoryMapper.deleteById(id);
         }
-        if (count==0){
+        if (count == 0) {
             throw new ServiceException(ResultCode.PARAM_IS_INVALID);
         }
     }
 
     @Override
     public IPage<Category> query(Integer pageNum, Integer pageSize, Integer parentId) {
-        if (pageNum == null || pageNum <= 0 || pageSize == null|| pageSize <= 0){
+        if (pageNum == null || pageNum <= 0 || pageSize == null || pageSize <= 0) {
             throw new ServiceException(ResultCode.PARAM_IS_INVALID);
         }
         Page<Category> page = new Page<>(pageNum, pageSize);
         LambdaQueryWrapper<Category> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(parentId!=null,Category::getParentId,parentId);//如果有parentId,查找所有以它为父栏目的栏目
+        wrapper.eq(parentId != null, Category::getParentId, parentId);//如果有parentId,查找所有以它为父栏目的栏目
         wrapper.orderByAsc(Category::getParentId)
                 .orderByAsc(Category::getOrderNum);
         Page<Category> list = categoryMapper.selectPage(page, wrapper);//这里一旦调用selectPage方法后返回值就会赋值给page
 //        System.out.println(list+":"+page);//list和page指向同一地址,list和page完全相同
-        if (list.getTotal()==0){
+        if (list.getTotal() == 0) {
             throw new ServiceException(ResultCode.CATEGORY_NOT_EXIST);
         }
         return list;
@@ -208,7 +215,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
     @Override
     public List<CategoryExtend> queryAllParent() {
         List<CategoryExtend> list = categoryMapper.queryAllParent();
-        if (list.size()==0){
+        if (list.size() == 0) {
             throw new ServiceException(ResultCode.CATEGORY_NOT_EXIST);
         }
         return list;
@@ -220,7 +227,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
 //        wrapper.eq(Category::getParentId,null);//这样写没用,相当于要求确切值为null，而不是查没有值的数据;相当于where parent_id=null
         wrapper.isNull(Category::getParentId);//这样写才是查没有值的数据;相当于where parent_id is null
         List<Category> list = categoryMapper.selectList(wrapper);//不会返回null，最多返回空集合
-        if (list.size()==0){
+        if (list.size() == 0) {
             throw new ServiceException(ResultCode.CATEGORY_NOT_EXIST);
         }
         return list;

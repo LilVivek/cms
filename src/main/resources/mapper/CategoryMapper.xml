@@ -38,16 +38,19 @@
                c1.description,
                c1.order_num,
                c1.parent_id,
+               c1.deleted,
                c2.id          c_id,
                c2.`name`      c_name,
                c2.description c_description,
                c2.order_num   c_order_num,
-               c2.parent_id   c_parent_id
+               c2.parent_id   c_parent_id,
+               c2.deleted
         from cms_category c1
                  LEFT JOIN cms_category c2
                            ON c1.id = c2.parent_id
-        where c1.deleted = 0
-          and c2.deleted = 0
+        where c1.parent_id IS NULL
+          and c1.deleted = 0
+          AND (c2.deleted IS NULL OR c2.deleted = 0)/*这里c2.deleted 不能写 !=1 因为!=1不包括null 这里要用null来外连接*/
         order by c1.order_num, c2.order_num
     </select>
 
