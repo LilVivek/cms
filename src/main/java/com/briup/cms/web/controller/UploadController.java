@@ -21,10 +21,19 @@ public class UploadController {
     IUploadService iUploadService;
 
     @ApiOperation("文件上传")
-    @PostMapping("/auth/upload")
+    @PostMapping("/upload")
     @SneakyThrows//帮助处理 编译时异常
     // @RequestPart 注解可以与 MultipartFile 类型的参数一起使用，以处理上传的文件
     public Result upload(@RequestPart MultipartFile img) {
+        log.info("开始进行文件上传:{}", img.getOriginalFilename());
+        String url = iUploadService.upLoad(img);
+        return Result.success(url);
+    }
+    @ApiOperation("文件上传")
+    @PostMapping("/auth/upload")
+    @SneakyThrows//帮助处理 编译时异常
+    // @RequestPart 注解可以与 MultipartFile 类型的参数一起使用，以处理上传的文件
+    public Result uploadByAuth(@RequestPart MultipartFile img) {
         log.info("开始进行文件上传:{}", img.getOriginalFilename());
         String url = iUploadService.upLoad(img);
         return Result.success(url);

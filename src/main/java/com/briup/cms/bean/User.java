@@ -5,6 +5,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -28,6 +31,7 @@ public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @JsonSerialize(using =ToStringSerializer.class)//在java对象的属性序列化成Json数据时，指定转换成String类型
     @ApiModelProperty("用户id")
     private Long id;
 

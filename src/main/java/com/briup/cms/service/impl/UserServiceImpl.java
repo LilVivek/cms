@@ -1,6 +1,9 @@
 package com.briup.cms.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.briup.cms.bean.Extend.UserExtend;
 import com.briup.cms.bean.User;
 import com.briup.cms.exception.ServiceException;
 import com.briup.cms.mapper.UserMapper;
@@ -15,6 +18,7 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -73,7 +77,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(User::getUsername, user.getUsername());
         User user1 = userMapper.selectOne(wrapper);
-        if (user1 != null) {//如果不为空说明用户名不唯一
+        if (user1 != null) {//如果不为空说明用户名已存在
             throw new ServiceException(ResultCode.USERNAME_HAS_EXISTED);
         }
         if (!StringUtils.hasText(user.getUsername()) || !StringUtils.hasText(user.getPassword())) {
@@ -82,5 +86,72 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         user.setPassword(MD5Utils.MD5(user.getPassword()));//密码用MD5加密
         user.setRegisterTime(LocalDateTime.now());
         userMapper.insert(user);
+    }
+
+    @Override
+    public void setVip(Long id) {
+        if (id == null) {
+            throw new ServiceException(ResultCode.PARAM_IS_BLANK);
+        }
+        User user = userMapper.selectById(id);
+        if (user == null) {
+            throw new ServiceException(ResultCode.USER_NOT_EXIST);
+        }
+        if (user.getIsVip() == 1) {//已经设置为会员，不可重复设置会员状态和会员过期时间
+            throw new ServiceException(ResultCode.DATA_EXISTED);
+        }
+        user.setIsVip(1);
+        user.setExpiresTime(LocalDateTime.now().plusMonths(1));//加一个月
+        userMapper.updateById(user);
+    }
+
+    @Override
+    public void updateUser(User user) {
+        if (user == null) {
+            throw new ServiceException(ResultCode.USER_NOT_EXIST);
+        }
+        Long id = user.getId();
+        if (id == null || userMapper.selectById(id) == null) {
+            throw new ServiceException(ResultCode.USER_NOT_EXIST);
+        }
+        String newUsername = user.getUsername();//这里的newUsername可能发生了修改
+        if (!newUsername.equals(userMapper.selectById(id).getUsername())) {//根据id查询原用户名是否产生了修改
+            LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(User::getUsername, newUsername);
+            User selectOne = userMapper.selectOne(wrapper);
+            if (selectOne != null) {//能在数据库里查询到说明不唯一
+                throw new ServiceException(ResultCode.USERNAME_HAS_EXISTED);
+            }
+        }
+        userMapper.updateById(user);
+    }
+
+    @Override
+    public void deleteByBatch(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            throw new ServiceException(ResultCode.PARAM_IS_INVALID);
+        }
+        int count = 0;
+        for (Long id : ids) {
+            User user = userMapper.selectById(id);
+            if (user != null) {
+                count++;
+            }
+        }
+        if (count > 0) {//至少有一个id有效且存在
+            userMapper.deleteBatchIds(ids);
+        }else {
+            throw new ServiceException(ResultCode.USER_NOT_EXIST);
+        }
+    }
+
+    @Override
+    public IPage<UserExtend> queryByPage(Integer pageNum, Integer pageSize, String username, String status, Integer roleId, Integer isVip) {
+        if (pageNum==null||pageSize==null){
+            throw new ServiceException(ResultCode.PARAM_IS_BLANK);
+        }
+        Page<UserExtend> page = new Page<>(pageNum, pageSize);
+        IPage<UserExtend> pageWithRole=userMapper.selectPageWithRole(page,username, status, roleId, isVip);
+        return pageWithRole;
     }
 }
