@@ -114,6 +114,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         if (id == null || userMapper.selectById(id) == null) {
             throw new ServiceException(ResultCode.USER_NOT_EXIST);
         }
+        if (!StringUtils.hasText(user.getUsername())){//用户名不能为空
+            throw new ServiceException(ResultCode.PARAM_IS_BLANK);
+        }
         String newUsername = user.getUsername();//这里的newUsername可能发生了修改
         if (!newUsername.equals(userMapper.selectById(id).getUsername())) {//根据id查询原用户名是否产生了修改
             LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
