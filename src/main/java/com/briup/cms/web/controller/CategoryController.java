@@ -1,12 +1,11 @@
 package com.briup.cms.web.controller;
 
 import com.alibaba.excel.EasyExcel;
-import com.alibaba.excel.ExcelReader;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.briup.cms.bean.Category;
 import com.briup.cms.bean.Extend.CategoryExtend;
-import com.briup.cms.service.IArticleService;
 import com.briup.cms.service.ICategoryService;
+import com.briup.cms.util.AOP.MarkupJoinPoint;
 import com.briup.cms.util.Result;
 import com.briup.cms.util.excel.CategoryListener;
 import com.briup.cms.util.excel.ParentIdConverter;
@@ -18,8 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -95,6 +92,7 @@ public class CategoryController {
         return Result.success(list);
     }
 
+    @MarkupJoinPoint
     @ApiOperation(value = "导入栏目数据")
     @PostMapping("/import")
     public Result imports(@RequestPart MultipartFile file) throws IOException {
@@ -104,6 +102,7 @@ public class CategoryController {
         return Result.success("数据导入成功");
     }
 
+    @MarkupJoinPoint
     @ApiOperation("导出栏目数据")
     @GetMapping(value = "/export", produces = "application/octet-stream")
     public void exports(HttpServletResponse response) throws IOException {
