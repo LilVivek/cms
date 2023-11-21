@@ -13,6 +13,7 @@ mvnw
 cms.iml
 !**/src/main/**/target/
 !**/src/test/**/target/
+src/test/
 ### STS ###
 .apt_generated
 .classpath

@@ -232,4 +232,31 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         }
         return list;
     }
+
+    @Override
+    public void insertInBatch(List<Category> list) {
+        List<Category> list1 =new ArrayList<>(100);
+        for (Category category : list) {
+            int selectOne = categoryMapper.selectOneWithoutDeleted(category);
+            if (selectOne != 0) {//栏目名不唯一
+                System.out.println(category.getName()+"插入失败，数据库中已存在");
+                continue;
+            }
+            /*下面的逻辑在转换器里已经写过了*/
+//            Integer parentId = category.getParentId();
+//            if (parentId != null && categoryMapper.selectById(parentId) == null) {//如果为二级栏目其父栏目id必须有效
+//                continue;
+//            }
+            list1.add(category);
+        }
+        if (list1.size()==0){
+            throw new ServiceException(ResultCode.CATEGORY_HAS_EXISTED);
+        }
+        categoryMapper.insertInBatch(list1);
+    }
+
+    @Override
+    public List<Category> queryAll() {
+        return categoryMapper.selectList(null);
+    }
 }

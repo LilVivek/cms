@@ -32,4 +32,8 @@ public interface ICategoryService extends IService<Category> {
     List<CategoryExtend> queryAllParent();
 
     List<Category> queryAllOneLevel();
+
+    void insertInBatch(List<Category> list);
+
+    List<Category> queryAll();
 }

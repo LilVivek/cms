@@ -19,4 +19,8 @@ import java.util.List;
 public interface CategoryMapper extends BaseMapper<Category> {
 
     List<CategoryExtend> queryAllParent();
+
+    void insertInBatch(List<Category> list);
+
+    int selectOneWithoutDeleted(Category category);
 }

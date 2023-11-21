@@ -16,6 +16,14 @@
     <sql id="Base_Column_List">
         id, name, description, order_num, deleted, parent_id
     </sql>
+    <insert id="insertInBatch">
+        insert into cms_category (`name`,description,order_num,deleted,parent_id)
+        values
+        /*相当于Lambda表达式list.forEach(category -> {});*/
+        <foreach collection="list" separator="," item="category">/*实体类对象item的属性可以用item.属性名获取*/
+            (#{category.name},#{category.description},#{category.orderNum},#{category.deleted},#{category.parentId})
+        </foreach>
+    </insert>
 
 
     <!--    查询所有1级栏目(含2级)-->
@@ -52,6 +60,12 @@
           and c1.deleted = 0
           AND (c2.deleted IS NULL OR c2.deleted = 0)/*这里c2.deleted 不能写 !=1 因为!=1不包括null 这里要用null来外连接*/
         order by c1.order_num, c2.order_num
+    </select>
+    <!--查找除了排除逻辑删除的查询-->  <!--resultType和resultMap都是映射到外面接口的返回类型-->
+    <select id="selectOneWithoutDeleted" resultType="java.lang.Integer">/*根据SELECT里的列名的数据返回Integer类型的数据*/
+        SELECT count(*)
+        FROM cms_category
+        WHERE name = #{name}
     </select>
 
 </mapper>
