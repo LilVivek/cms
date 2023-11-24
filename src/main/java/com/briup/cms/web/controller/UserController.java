@@ -67,7 +67,7 @@ public class UserController {
     }
 
     @ApiOperation(value = "根据id删除用户", notes = "至少有一个id存在且有效")
-    @DeleteMapping("/deleteByBatch/{ids}")
+    @DeleteMapping("/deleteById/{ids}")
     public Result deleteByBatch(@PathVariable("ids") List<Long> ids) {
         iUserService.deleteByBatch(ids);
         return Result.success("删除成功");
@@ -78,5 +78,12 @@ public class UserController {
     public Result query(Integer pageNum, Integer pageSize, String username, String status, Integer roleId, Integer isVip) {
         IPage<UserExtend> page = iUserService.queryByPage(pageNum, pageSize, username, status, roleId, isVip);
         return Result.success(page);
+    }
+
+    @ApiOperation(value = "查询所有用户")
+    @GetMapping("/getAllUser")
+    public Result getAllUser() {
+        List<User> list = iUserService.list();
+        return Result.success(list);
     }
 }

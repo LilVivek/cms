@@ -1,8 +1,13 @@
 package com.briup.cms.mapper;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.briup.cms.bean.Category;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.briup.cms.bean.Extend.ArticleExtend;
+import com.briup.cms.bean.Extend.ArticlePage;
 import com.briup.cms.bean.Extend.CategoryExtend;
+import com.briup.cms.bean.Extend.UserExtend;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -23,4 +28,6 @@ public interface CategoryMapper extends BaseMapper<Category> {
     void insertInBatch(List<Category> list);
 
     int selectOneWithoutDeleted(Category category);
+
+
 }

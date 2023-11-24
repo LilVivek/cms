@@ -3,6 +3,7 @@ package com.briup.cms.web.controller;
 import com.briup.cms.bean.Role;
 import com.briup.cms.service.IRoleService;
 import com.briup.cms.util.Result;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,7 @@ import java.util.List;
  * @author Vivek
  * @since 2023-11-14
  */
+@Api(tags = "角色模块")
 @RestController
 @RequestMapping("/role")
 public class RoleController {

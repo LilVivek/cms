@@ -19,7 +19,7 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface UserMapper extends BaseMapper<User> {
 
-    //分页+条件查询用户(含角色) /*只要返回类型是分页Page类型 传入page对象就可以自动实现分页*/
+    //分页+条件查询用户(含角色)  /* mp中自定义分页查询的固定用法：第一个参数为IPage对象，返回值也是IPage对象 */
     IPage<UserExtend> selectPageWithRole(Page<UserExtend> page,
                                          @Param("username") String username,
                                          @Param("status") String status,

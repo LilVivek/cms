@@ -2,17 +2,24 @@ package com.briup.cms.bean;
 
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author Vivek
@@ -20,13 +27,15 @@ import lombok.experimental.Accessors;
  */
 @Getter
 @Setter
-@Accessors(chain = true)
+@AllArgsConstructor
+@NoArgsConstructor
+//@Accessors(chain = true)
 @TableName("cms_article")
 @ApiModel(value = "Article对象", description = "")
 public class Article implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    @JsonSerialize(using = ToStringSerializer.class)//在java对象的属性序列化成Json数据时，指定转换成String类型
     @ApiModelProperty("文章id")
     private Long id;
 
@@ -61,6 +70,7 @@ public class Article implements Serializable {
     @TableLogic
     private Integer deleted;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @ApiModelProperty("文章发表时间")
     private LocalDateTime publishTime;
 }

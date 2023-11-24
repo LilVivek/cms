@@ -23,4 +23,104 @@
         id, title, content, status, read_num, like_num, dislike_num, user_id, category_id, charged, deleted, publish_time
     </sql>
 
+
+    <resultMap id="UserBaseResultMap" type="com.briup.cms.bean.User">
+        <id column="u_id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="avatar" property="avatar"/>
+        <result column="gender" property="gender"/>
+        <result column="email" property="email"/>
+        <result column="phone" property="phone"/>
+        <result column="register_time" property="registerTime"/>
+        <result column="u_status" property="status"/>
+        <result column="birthday" property="birthday"/>
+        <result column="role_id" property="roleId"/>
+        <result column="is_vip" property="isVip"/>
+        <result column="expires_time" property="expiresTime"/>
+        <result column="deleted" property="deleted"/>
+    </resultMap>
+    <resultMap id="CommentBaseResultMap" type="com.briup.cms.bean.Comment">
+        <id column="c_id" property="id"/>
+        <result column="content" property="content"/>
+        <result column="publish_time" property="publishTime"/>
+        <result column="user_id" property="userId"/>
+        <result column="article_id" property="articleId"/>
+        <result column="deleted" property="deleted"/>
+    </resultMap>
+
+    <resultMap id="selectArticleExtendByPageResultMap" type="com.briup.cms.bean.Extend.ArticleExtend"
+               extends="BaseResultMap">
+        <association property="author" resultMap="UserBaseResultMap"/>
+        <!--一对多要放在下面，因为不知道具体有多少个，如果在上面，不知道什么时候到association-->
+        <!--一定要按这个顺序放id*,result*,association*,collection*,discriminator-->
+        <collection property="comments" resultMap="CommentBaseResultMap"/>
+
+    </resultMap>
+
+    <select id="selectArticleExtendByPage" resultMap="selectArticleExtendByPageResultMap">
+        select ca.id,
+        ca.title,
+        ca.content,
+        ca.status,
+        ca.read_num,
+        ca.like_num,
+        ca.dislike_num,
+        ca.user_id,
+        ca.category_id,
+        ca.charged,
+        ca.deleted,
+        ca.publish_time,
+        cu.id u_id,
+        cu.username,
+        cu.password,
+        cu.avatar,
+        cu.gender,
+        cu.email,
+        cu.phone,
+        cu.register_time,
+        cu.status u_status,
+        cu.birthday,
+        cu.role_id,
+        cu.is_vip,
+        cu.expires_time,
+        cu.deleted,
+        cc.id c_id,
+        cc.content,
+        cc.publish_time,
+        cc.user_id,
+        cc.article_id,
+        cc.deleted
+        from cms_article ca
+        left join cms_user cu on ca.user_id = cu.id
+        left join cms_comment cc on ca.id = cc.article_id
+        <where>
+            ca.deleted = 0 and cu.deleted = 0 <!--文章一定要有对应的作者 否则查询不到-->
+            <!--评论可以为空，所以不用写where cc.deleted=0 不然外连接无法连接null-->
+            <if test="articlePage.title!=null and articlePage.title!=''">
+             and ca.title like concat('%',#{articlePage.title},'%')
+            </if>
+            <if test="articlePage.categoryId!=null and articlePage.categoryId!=''">
+                and ca.category_id = #{articlePage.categoryId}
+            </if>
+            <if test="articlePage.status!=null and articlePage.status!=''">
+                and ca.status = #{articlePage.status}
+            </if>
+            <if test="articlePage.userId!=null and articlePage.userId!=''">
+                and ca.user_id = #{articlePage.userId}
+            </if>
+            <if test="articlePage.charged!=null and articlePage.charged!=''">
+                and ca.charged = #{articlePage.charged}
+            </if>
+            <if test="articlePage.startTime!=null"><!--这里不能写articlePage.startTime!='' 因为LocalDateTime无法和''比较-->
+                and ca.publish_time >= #{articlePage.startTime}
+            </if>
+            <if test="articlePage.endTime!=null"><!--这里不能写articlePage.endTime!='' 因为LocalDateTime无法和''比较-->
+                and ca.publish_time <![CDATA[<=]]> #{articlePage.endTime}
+            </if>
+
+        </where>
+
+    </select>
+
 </mapper>

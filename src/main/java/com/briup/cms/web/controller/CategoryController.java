@@ -13,10 +13,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.print.attribute.standard.Media;
 import javax.servlet.http.HttpServletResponse;
+import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 
@@ -97,18 +100,27 @@ public class CategoryController {
     @PostMapping("/import")
     public Result imports(@RequestPart MultipartFile file) throws IOException {
         ParentIdConverter.list = iCategoryService.queryAllOneLevel();
-        //尽量不要用doReadSync()方法来获取返回值，当数据量过大时全存在内存可能导致OOM(在监听器里处理list)
+        //尽量不要用doReadSync()方法来获取返回值，当数据量过大时全存在内存可能导致OOM(先在监听器里中转处理list，然后再去service处理)
         EasyExcel.read(file.getInputStream(), Category.class, new CategoryListener(iCategoryService)).sheet().doRead();
         return Result.success("数据导入成功");
+
     }
 
     @MarkupJoinPoint
     @ApiOperation("导出栏目数据")
-    @GetMapping(value = "/export", produces = "application/octet-stream")
+    /*
+    produces = "application/octet-stream" 二进制输出流（前端指定）
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"（官方文档）
+    * */
+    @GetMapping(value = "/export", produces = "application/octet-stream")//这里前端指定了接收类型就是二进制流
     public void exports(HttpServletResponse response) throws IOException {
         ParentIdConverter.list = iCategoryService.queryAllOneLevel();
         //1.获取栏目数据
         List<Category> list = iCategoryService.queryAll();
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+        response.setCharacterEncoding("utf-8");
+        response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + "栏目名称" + ".xlsx");
         //2.导出数据(导出不需要监听器，导入需要监听器)
 //        EasyExcel.write(new File("C:\\Users\\Vivek\\Desktop\\test.xlsx"), Category.class).sheet().doWrite(list);//测试用文件
         EasyExcel.write(response.getOutputStream(), Category.class).sheet().doWrite(list);

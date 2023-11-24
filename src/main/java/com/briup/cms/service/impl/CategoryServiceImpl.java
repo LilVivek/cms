@@ -3,6 +3,7 @@ package com.briup.cms.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.briup.cms.bean.Article;
 import com.briup.cms.bean.Category;
@@ -223,6 +224,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
 
     @Override
     public List<Category> queryAllOneLevel() {
+//        LambdaQueryChainWrapper<Category> wrapper1 = new LambdaQueryChainWrapper<>(categoryMapper);
         LambdaQueryWrapper<Category> wrapper = new LambdaQueryWrapper<>();
 //        wrapper.eq(Category::getParentId,null);//这样写没用,相当于要求确切值为null，而不是查没有值的数据;相当于where parent_id=null
         wrapper.isNull(Category::getParentId);//这样写才是查没有值的数据;相当于where parent_id is null

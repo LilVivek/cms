@@ -1,4 +1,4 @@
-package com.briup.cms.web.controller;
+package com.briup.cms.web.controller.NoAuth;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.briup.cms.bean.Article;
@@ -10,7 +10,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
 
 import java.util.List;
 
@@ -22,10 +21,10 @@ import java.util.List;
  * @author Vivek
  * @since 2023-11-14
  */
-@Api(tags = "咨询模块")
+@Api(tags = "游客咨询模块")
 @RestController
-@RequestMapping("/auth/article")
-public class ArticleController {
+@RequestMapping("/articles")
+public class NoAuthArticleController {
     @Autowired//转换器->监听器->IOC容器
             IArticleService iArticleService;
 
@@ -60,7 +59,7 @@ public class ArticleController {
 
 
     @ApiOperation(value = "查询指定文章", notes = "此接口用于查询指定文章，并且带有三条一级评论")
-    @GetMapping("/queryById/{id}")
+    @GetMapping("/{id}")
     public Result queryById(@PathVariable("id") Long id) {
         ArticleExtend articleExtend = iArticleService.queryById(id);
         return Result.success(articleExtend);

@@ -55,17 +55,17 @@
                c2.deleted
         from cms_category c1
                  LEFT JOIN cms_category c2
-                           ON c1.id = c2.parent_id
+                           ON c1.id = c2.parent_id and c2.deleted = 0/*修改后的这个细节*/
         where c1.parent_id IS NULL
           and c1.deleted = 0
-          AND (c2.deleted IS NULL OR c2.deleted = 0)/*这里c2.deleted 不能写 !=1 因为!=1不包括null 这里要用null来外连接*/
         order by c1.order_num, c2.order_num
     </select>
     <!--查找除了排除逻辑删除的查询-->  <!--resultType和resultMap都是映射到外面接口的返回类型-->
     <select id="selectOneWithoutDeleted" resultType="java.lang.Integer">/*根据SELECT里的列名的数据返回Integer类型的数据*/
-        SELECT count(*)
-        FROM cms_category
-        WHERE name = #{name}
+    SELECT count(*)
+    FROM cms_category
+    WHERE name = #{name}
     </select>
+
 
 </mapper>
