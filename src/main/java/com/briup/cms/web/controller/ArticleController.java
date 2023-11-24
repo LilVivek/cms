@@ -5,6 +5,7 @@ import com.briup.cms.bean.Article;
 import com.briup.cms.bean.Extend.ArticleExtend;
 import com.briup.cms.bean.Extend.ArticlePage;
 import com.briup.cms.service.IArticleService;
+import com.briup.cms.util.AOP.MyLog;
 import com.briup.cms.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,6 +30,7 @@ public class ArticleController {
     @Autowired//转换器->监听器->IOC容器
             IArticleService iArticleService;
 
+    @MyLog("新增或修改文章")
     @ApiOperation("新增或修改文章")
     @PostMapping("/saveOrUpdate")
     public Result saveOrUpdate(@RequestBody Article article) {

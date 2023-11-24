@@ -5,6 +5,7 @@ import com.briup.cms.bean.Article;
 import com.briup.cms.bean.Extend.ArticleExtend;
 import com.briup.cms.bean.Extend.ArticlePage;
 import com.briup.cms.service.IArticleService;
+import com.briup.cms.util.AOP.MyLog;
 import com.briup.cms.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -56,7 +57,6 @@ public class NoAuthArticleController {
         IPage<ArticleExtend> page = iArticleService.queryByPage(articlePage);
         return Result.success(page);
     }
-
 
     @ApiOperation(value = "查询指定文章", notes = "此接口用于查询指定文章，并且带有三条一级评论")
     @GetMapping("/{id}")
