@@ -49,8 +49,7 @@ public class LogController {
     @GetMapping(value = "/export", produces = "application/octet-stream")
     public void export(HttpServletResponse response,LogExportParam logExportParam) throws IOException {
         //1.获取数据
-        List<Log> list = iLogService.queryForExport(null);
-        Thread thread = new Thread();
+        List<Log> list = iLogService.queryForExport(logExportParam);
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);//这两个是必须的
         response.setCharacterEncoding("utf-8");//这两个是必须的

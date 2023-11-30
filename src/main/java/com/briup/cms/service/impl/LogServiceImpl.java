@@ -53,7 +53,17 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements ILogS
 
     @Override
     public List<Log> queryForExport(LogExportParam logExportParam) {
-        List<Log> list = logMapper.selectList(null);
+        if (logExportParam == null) {
+            throw new ServiceException(ResultCode.PARAM_IS_BLANK);
+        }
+        List<Log> list = new LambdaQueryChainWrapper<>(logMapper)
+                .like(StringUtils.hasText(logExportParam.getUsername()), Log::getUsername, logExportParam.getUsername())
+                .like(StringUtils.hasText(logExportParam.getRequestUrl()), Log::getRequestUrl, logExportParam.getRequestUrl())
+                .le(logExportParam.getEndTime() != null, Log::getCreateTime, logExportParam.getEndTime())
+                .ge(logExportParam.getStartTime() != null, Log::getCreateTime, logExportParam.getStartTime())
+                .orderByDesc(Log::getCreateTime)
+                .last(logExportParam.getCount() != null, "limit " + logExportParam.getCount())
+                .list();
         return list;
     }
 
